@@ -1,3 +1,5 @@
 /SoftwareImageFramework/target/*
 /SoftwareImageFramework/.settings
+/LbOFramework/target/*
+/LbOFramework/.settings
 *~
