@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY owl11 "http://www.w3.org/2006/12/owl11#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY owl11xml "http://www.w3.org/2006/12/owl11-xml#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY softimage "http://embodiedlearningbyobservation.googlecode.com/svn/ontology/softwareimage.owl#" >
+    <!ENTITY lsc "http://embodiedlearningbyobservation.googlecode.com/svn/ontology/learningscearios.owl#" >
+]>
+
+
+<rdf:RDF xmlns="&lsc;" 
+     xml:base="&lsc;"
+     xmlns:owl11="http://www.w3.org/2006/12/owl11#"
+     xmlns:softimage="&softimage;"
+     xmlns:lsc="&lsc;"
+     xmlns:owl11xml="http://www.w3.org/2006/12/owl11-xml#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#">
+     
+    <owl:Ontology rdf:about="">
+        <rdfs:comment xml:lang="en">
+    	Domain specific ontology for the learning scenarios
+    	Author: Paulo R. Costa    
+        </rdfs:comment>
+        <owl:versionInfo xml:lang="en">v.0.1. Initial version</owl:versionInfo>
+        <owl:imports rdf:resource="&softimage;"/>
+ </owl:Ontology>
+
+ <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // LbOToolkit Tests 
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+<!-- Expert and Apprentice-->
+<Sensor rdf:ID="numberObserver">
+	<datatype rdf:datatype="&xsd;string">java.lang.Integer</datatype> 
+</Sensor>
+
+<!-- Expert -->
+<VisualAttribute rdf:ID="agentHand">
+	<datatype rdf:datatype="&xsd;string">pt.iscte.pramc.tests.lof.scn.expert.FingerState[]</datatype>
+	<matches rdf:resource="#AgentHandToSimpleHand"/> 
+</VisualAttribute>
+
+<!-- Apprentice -->
+<VisualAttribute rdf:ID="simpleAgentHand">
+	<datatype rdf:datatype="&xsd;string">java.lang.String[]</datatype> 
+	<matches rdf:resource="#AgentHandToSimpleHand"/>
+</VisualAttribute>
+
+<!-- match class -->
+<Matcher rdf:ID="AgentHandToSimpleHand">
+	<implementedBy rdf:datatype="&xsd;string">pt.iscte.pramc.tests.lof.scn.domain.HandToSimpleHand</implementedBy>
+</Matcher>
+
+<!-- Expert and Apprentice actions -->
+<Action rdf:ID="changeIndexTo"/>
+
+<Action rdf:ID="changeMiddleTo"/>
+
+<Action rdf:ID="changeRingTo"/>
+
+<Action rdf:ID="changePinkyTo"/>
+
+<Action rdf:ID="changeThumbTo"/>
+     
+</rdf:RDF>
