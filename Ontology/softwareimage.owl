@@ -1,0 +1,755 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY owl11 "http://www.w3.org/2006/12/owl11#" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY owl11xml "http://www.w3.org/2006/12/owl11-xml#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY softimage "http://embodiedlearningbyobservation.googlecode.com/svn/ontology/softwareimage.owl#" >
+]>
+
+
+<rdf:RDF xmlns="&softimage;" 
+     xml:base="&softimage;"
+     xmlns:owl11="http://www.w3.org/2006/12/owl11#"
+     xmlns:softimage="&softimage;"
+     xmlns:owl11xml="http://www.w3.org/2006/12/owl11-xml#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#">
+     
+    <owl:Ontology rdf:about="">
+        <rdfs:comment xml:lang="en">
+    	Provides the basis for atomic element description in agents with software image
+    	Author: Paulo R. Costa    
+        </rdfs:comment>
+        <owl:versionInfo xml:lang="en">v.0.1. Initial version</owl:versionInfo>
+ </owl:Ontology>
+
+ <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Basic elements
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+ 
+ <owl:Class rdf:ID="Atomic"/>
+
+<owl:Class rdf:ID="Action">
+	<rdfs:subClassOf rdf:resource="#Atomic" />
+</owl:Class>
+
+ <owl:Class rdf:ID="Supplier">
+	<rdfs:subClassOf rdf:resource="#Atomic" />
+</owl:Class>
+
+<owl:Class rdf:ID="Sensor">
+	<rdfs:subClassOf rdf:resource="#Supplier" />
+</owl:Class>
+
+<owl:Class rdf:ID="VisualAttribute">
+	<rdfs:subClassOf rdf:resource="#Supplier" />
+</owl:Class>
+ 
+ <!-- Allows matching between two atomic elements -->
+ 
+ <owl:Class rdf:ID="Matcher">
+ 	<rdfs:subClassOf>
+ 		<owl:Restriction> 
+      		<owl:onProperty rdf:resource="#implementedBy"/>
+      		<owl:maxCardinality rdf:datatype="&xsd;nonNegativeInteger">1</owl:maxCardinality>
+    	</owl:Restriction>
+ 	</rdfs:subClassOf>
+</owl:Class>
+ 
+ <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     --> 
+ 
+ <!-- Defines matching between atomic elements -->
+ 
+ <owl:ObjectProperty rdf:ID="matches">
+	<rdfs:domain rdf:resource="#Atomic" />
+ 	<rdfs:range  rdf:resource="#Matcher" />
+ </owl:ObjectProperty>
+ 
+
+<!-- Link to the implementing class-->
+ <owl:DatatypeProperty rdf:ID="implementedBy">
+  	<rdfs:domain rdf:resource="#Matcher" />    
+  	<rdfs:range  rdf:resource="&xsd;string"/>
+</owl:DatatypeProperty> 
+ 
+ 
+ <!-- Defines the datatype supplied by sensors and visual elements-->
+  
+  <owl:DatatypeProperty rdf:ID="datatype">
+  	<rdfs:domain rdf:resource="#Supplier" />    
+  	<rdfs:range  rdf:resource="&xsd;string"/>
+</owl:DatatypeProperty> 
+
+
+<!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Domain representations
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     --> 
+
+
+<!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // An example of domain representation
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     --> 
+
+<Sensor rdf:ID="LightSensorA">
+	<datatype rdf:datatype="&xsd;string">java.lang.Color</datatype>
+	<matches rdf:resource="#LigthSensorAtoB"/> 
+</Sensor>
+
+<Matcher rdf:ID="LigthSensorAtoB">
+	<implementedBy rdf:datatype="&xsd;string">pt.iscte.pramc.tests.sit.owl.TestTranslator</implementedBy>
+</Matcher>
+
+<Sensor rdf:ID="LightSensorB">
+	<datatype rdf:datatype="&xsd;string">java.lang.Color</datatype> 
+	<matches rdf:resource="#LigthSensorAtoB"/>
+</Sensor>
+
+ <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Extra parts
+    // prefix: 
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+     
+ <!-- Sorted Set Handler SSH_-->
+
+<Sensor rdf:ID="SSH_refreshBuffer">
+	<datatype rdf:datatype="&xsd;string">java.lang.Boolean</datatype> 
+</Sensor>
+
+<Sensor rdf:ID="SSH_refreshToProvide">
+	<datatype rdf:datatype="&xsd;string">java.lang.Boolean</datatype> 
+</Sensor>
+
+<Action rdf:ID="SSH_retrieveFirstFromBuffer">
+</Action>
+
+<Action rdf:ID="SSH_addToBeProvided">
+</Action>
+
+<Action rdf:ID="SSH_provideElement">
+</Action>
+
+<Action rdf:ID="SSH_cleanToProvide">
+</Action>
+
+<Action rdf:ID="SSH_addToProvided">
+</Action>
+
+ <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Software Image Testing
+    // prefix: SWIEX_
+    ///////////////////////////////////////////////////////////////////////////////////////
+ -->
+
+<Sensor rdf:ID="SWIEX_simpleSensor">
+	<datatype rdf:datatype="&xsd;string">java.lang.Integer</datatype> 
+</Sensor>
+
+<Sensor rdf:ID="SWIEX_complexSensor">
+	<datatype rdf:datatype="&xsd;string">java.lang.Integer</datatype> 
+</Sensor>
+
+<VisualAttribute rdf:ID="SWIEX_simpleVa">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa1">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa2">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa3">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa4">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa5">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa6">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa7">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa8">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa9">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa10">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa11">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa12">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa13">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa14">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa15">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa16">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa17">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa18">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa19">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="SWIEX_complexVa20">
+	<datatype rdf:datatype="&xsd;string">java.lang.String</datatype> 
+</VisualAttribute>
+
+<Action rdf:ID="SWIEX_simpleAction">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction1">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction2">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction3">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction4">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction5">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction6">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction7">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction8">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction9">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction10">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction11">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction12">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction13">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction14">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction15">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction16">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction17">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction18">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction19">
+</Action>
+
+<Action rdf:ID="SWIEX_complexAction20">
+</Action>
+
+ <!-- 
+    //
+    // Hand agents  Scenario
+    // prefix: HAS_
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+     
+<!-- SOURCE MANAGEMENT PART-->
+
+<Sensor rdf:ID="HAS_infoOnSource">
+	<datatype rdf:datatype="&xsd;string">pt.iscte.pramc.scenario.hand.domain.SourceInfo</datatype> 
+</Sensor>
+
+<Sensor rdf:ID="HAS_infoOnSearchBuffer">
+	<datatype rdf:datatype="&xsd;string">java.lang.Boolean</datatype> 
+</Sensor>
+
+<VisualAttribute rdf:ID="HAS_attachedToSource">
+	<datatype rdf:datatype="&xsd;string">java.lang.Boolean</datatype> 
+</VisualAttribute>
+
+<Action rdf:ID="HAS_findSourcesOnRadius">
+</Action>
+
+<Action rdf:ID="HAS_increaseSearchRadiusByOne">
+</Action>
+
+<Action rdf:ID="HAS_resetSearchRadius">
+</Action>
+
+<Action rdf:ID="HAS_removeSourceInfo">
+</Action>
+
+<Action rdf:ID="HAS_associateSource">
+</Action>
+
+<Action rdf:ID="HAS_detachFromSource">
+</Action>
+
+<Action rdf:ID="HAS_changeLocation">
+</Action>
+
+<Action rdf:ID="HAS_removeFromBuffer">
+</Action>
+
+<!-- HAND MANAGMENT PART -->
+
+<!-- Expert and Apprentice-->
+<Sensor rdf:ID="HAS_numberObserver">
+	<datatype rdf:datatype="&xsd;string">java.lang.Integer</datatype> 
+</Sensor>
+
+<Sensor rdf:ID="HAS_infoOnAgentLocation">
+	<datatype rdf:datatype="&xsd;string">pt.iscte.pramc.scenario.hand.domain.LocationType</datatype> 
+</Sensor>
+
+<!--  Special sensor for Hand Agent -->
+<Sensor rdf:ID="HAS_sourceActivity">
+	<datatype rdf:datatype="&xsd;string">java.lang.Boolean</datatype> 
+</Sensor>
+
+<!-- Expert -->
+<VisualAttribute rdf:ID="HAS_agentHand">
+	<datatype rdf:datatype="&xsd;string">pt.iscte.pramc.tests.lof.scn.expert.FingerState[]</datatype>
+	<matches rdf:resource="#HAS_AgentHandToSimpleHand"/> 
+</VisualAttribute>
+
+<!-- Apprentice -->
+<VisualAttribute rdf:ID="HAS_simpleAgentHand">
+	<datatype rdf:datatype="&xsd;string">java.lang.String[]</datatype> 
+	<matches rdf:resource="#HAS_AgentHandToSimpleHand"/>
+</VisualAttribute>
+
+<!-- match class for hand parameter -->
+<Matcher rdf:ID="HAS_AgentHandToSimpleHand">
+	<implementedBy rdf:datatype="&xsd;string">pt.iscte.pramc.scenario.hand.domain.HandToSimpleHand</implementedBy>
+</Matcher>
+
+<!-- match class for action parameter -->
+<Matcher rdf:ID="HAS_FingerPoseToState">
+	<implementedBy rdf:datatype="&xsd;string">pt.iscte.pramc.scenario.hand.domain.FingerPoseToFingerState</implementedBy>
+</Matcher>
+
+<Action rdf:ID="HAS_moveIndex">
+</Action>
+
+<Action rdf:ID="HAS_moveMiddle">
+</Action>
+
+<Action rdf:ID="HAS_moveRing">
+</Action>
+
+<Action rdf:ID="HAS_movePinky">
+</Action>
+
+<Action rdf:ID="HAS_moveThumb">
+</Action>
+
+<!-- Special action for Hand Agent -->
+
+<Action rdf:ID="HAS_resetSource">
+</Action>
+
+
+<!-- Expert and Apprentice actions with matcher
+<Action rdf:ID="HAS_changeIndexTo">
+	<matches rdf:resource="#FingerPoseToState"/>
+</Action>
+
+<Action rdf:ID="HAS_changeMiddleTo">
+	<matches rdf:resource="#FingerPoseToState"/>
+</Action>
+
+<Action rdf:ID="HAS_changeRingTo">
+	<matches rdf:resource="#FingerPoseToState"/>
+</Action>
+
+<Action rdf:ID="HAS_changePinkyTo">
+	<matches rdf:resource="#FingerPoseToState"/>
+</Action>
+
+<Action rdf:ID="HAS_changeThumbTo">
+	<matches rdf:resource="#FingerPoseToState"/>
+</Action>
+-->
+
+
+<!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Sign Language  Scenario
+    // prefix: SLS_
+    ///////////////////////////////////////////////////////////////////////////////////////
+--> 
+ 
+ 
+<!-- SOURCE UPDATE / MANAGEMENT PART -->
+
+<!-- Source activity sensor -->
+<Sensor rdf:ID="SLS_sourceActivity">
+	<datatype rdf:datatype="&xsd;string">java.lang.Boolean</datatype> 
+</Sensor>
+
+<!-- actions -->
+
+<Action rdf:ID="SLS_resetSource">
+</Action>
+
+<!-- HAND MANAGMENT / CONTROL PART -->
+
+<!-- Expert -->
+<VisualAttribute rdf:ID="SLS_agentHand">
+	<datatype rdf:datatype="&xsd;string">pt.iscte.pramc.scenario.sl.agents.common.expert.FingerState[]</datatype>
+	<matches rdf:resource="#SLS_AgentHandToStringHand"/> 
+</VisualAttribute>
+
+<!-- Apprentice -->
+<VisualAttribute rdf:ID="SLS_stringAgentHand">
+	<datatype rdf:datatype="&xsd;string">java.lang.String[]</datatype> 
+	<matches rdf:resource="#SLS_AgentHandToStringHand"/>
+</VisualAttribute>
+
+<!-- match class for hand parameter -->
+<Matcher rdf:ID="SLS_AgentHandToStringHand">
+	<implementedBy rdf:datatype="&xsd;string">pt.iscte.pramc.scenario.sl.agents.common.HandToStringHand</implementedBy>
+</Matcher>
+
+<!-- Expert and Apprentice -->
+
+<Sensor rdf:ID="SLS_numberObserver">
+	<datatype rdf:datatype="&xsd;string">java.lang.Integer</datatype> 
+</Sensor>
+
+<!-- Actions -->
+
+<Action rdf:ID="SLS_moveIndex">
+</Action>
+
+<Action rdf:ID="SLS_moveMiddle">
+</Action>
+
+<Action rdf:ID="SLS_moveRing">
+</Action>
+
+<Action rdf:ID="SLS_movePinky">
+</Action>
+
+<Action rdf:ID="SLS_moveThumb">
+</Action>
+
+<!--
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // List Ordering  Scenario (los)
+    // prefix: LOS_
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+ -->
+ 
+ <!-- Sensor definition -->
+
+<Sensor rdf:ID="LOS_orderingValidator">
+	<datatype rdf:datatype="&xsd;string">java.lang.Boolean</datatype> 
+</Sensor>
+     
+<Sensor rdf:ID="LOS_listPositionInfo">
+	<datatype rdf:datatype="&xsd;string">pt.iscte.pramc.tests.lof.scn.domain.PositionState</datatype> 
+</Sensor>     
+
+<Sensor rdf:ID="LOS_listSize">
+	<datatype rdf:datatype="&xsd;string">java.lang.Integer</datatype> 
+</Sensor>
+
+<!-- Action definition -->
+
+<Action rdf:ID="LOS_moveForwardOnList">
+</Action>
+
+<Action rdf:ID="LOS_moveBackwardOnList">
+</Action>
+
+
+<!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Game Scenario
+    // prefix: GS_
+    ///////////////////////////////////////////////////////////////////////////////////////
+-->
+
+<!-- Mountain Car testground -->
+
+<Sensor rdf:ID="GS_carState">
+	<datatype rdf:datatype="&xsd;string">java.lang.Boolean</datatype> 
+</Sensor>
+
+<Action rdf:ID="GS_carForward">
+</Action>
+
+<Action rdf:ID="GS_carBackward">
+</Action>
+
+<Action rdf:ID="GS_stillCar">
+</Action>
+
+<!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Trading Agents Scenario
+    // prefix: TA_
+    ///////////////////////////////////////////////////////////////////////////////////////
+-->
+
+<!-- Common -->
+
+<Sensor rdf:ID="TA_messageReceptor">
+	<datatype rdf:datatype="&xsd;string">pt.pramc.iscte.scenario.ta.domain.comm.Message</datatype> 
+</Sensor>
+
+<!-- Asset factories -->
+
+<VisualAttribute rdf:ID="TA_assetTwoIndicator">
+	<datatype rdf:datatype="&xsd;string">java.lang.Boolean</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="TA_assetThreeIndicator">
+	<datatype rdf:datatype="&xsd;string">java.lang.Boolean</datatype> 
+</VisualAttribute>
+
+<Action rdf:ID="TA_buildNewTypeTwoAsset">
+</Action>
+
+<Action rdf:ID="TA_buildNewTypeThreeAsset">
+</Action>
+
+<!-- Trader agent -->
+<!--   Asset Building part -->
+
+<VisualAttribute rdf:ID="TA_assetOneArrayFull">
+	<datatype rdf:datatype="&xsd;string">java.lang.Boolean</datatype> 
+</VisualAttribute>
+
+<Action rdf:ID="TA_buildAndStoreTypeOneAsset">
+</Action>
+
+<!--  Communication part -->
+
+<VisualAttribute rdf:ID="TA_communicationStatus">
+	<datatype rdf:datatype="&xsd;string">pt.pramc.iscte.scenario.ta.domain.CommStatus</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="TA_messagingState">
+	<datatype rdf:datatype="&xsd;string">pt.pramc.iscte.scenario.ta.agent.common.trader.MessagingState</datatype> 
+</VisualAttribute>
+
+<VisualAttribute rdf:ID="TA_assetsToAcquire">
+	<datatype rdf:datatype="&xsd;string">java.lang.Integer[]</datatype> 
+</VisualAttribute>
+
+<Sensor rdf:ID="TA_lookForCommunicableAgents">
+	<datatype rdf:datatype="&xsd;string">pt.pramc.iscte.scenario.ta.comm.Communications.CommAgent</datatype> 
+</Sensor>
+
+<Sensor rdf:ID="TA_amountOfTypeOneAssets">
+	<datatype rdf:datatype="&xsd;string">java.lang.Integer</datatype> 
+</Sensor>
+
+<Sensor rdf:ID="TA_amountOfTypeTwoAssets">
+	<datatype rdf:datatype="&xsd;string">java.lang.Integer</datatype> 
+</Sensor>
+
+<Action rdf:ID="TA_focusOnNextAgent">
+</Action>
+
+<Action rdf:ID="TA_storeAssets">
+</Action>
+
+<Action rdf:ID="TA_startCommunication">
+</Action>
+
+<Action rdf:ID="TA_resetTimeoutCounter">
+</Action>
+
+<Action rdf:ID="TA_increaseTimeoutCounter">
+</Action>
+
+<!-- Generic messaging -->
+
+<Action rdf:ID="TA_buildHelloMsg">
+</Action>
+
+<Action rdf:ID="TA_buildHelloMsgReply">
+</Action>
+
+<Action rdf:ID="TA_sendHoldedMessage">
+</Action>
+
+<Action rdf:ID="TA_buildAndSendHelloMsg">
+</Action>
+
+<Action rdf:ID="TA_buildOKReply">
+</Action>
+
+<Action rdf:ID="TA_buildNOKReply">
+</Action>
+
+<Action rdf:ID="TA_negativeReply">
+</Action>
+
+<Action rdf:ID="TA_buildValueForAsset">
+</Action>
+
+<Action rdf:ID="TA_tradeAssets">
+</Action>
+
+<Action rdf:ID="TA_buildSendAsset">
+</Action>
+
+<Action rdf:ID="TA_buildNoTransaction">
+</Action>
+
+<Action rdf:ID="TA_askProducesTypeTwoAsset">
+</Action>
+
+<Action rdf:ID="TA_askValueOfTypeTwoAsset">
+</Action>
+
+<Action rdf:ID="TA_askValueOfTypeThreeAsset">
+</Action>
+
+<Action rdf:ID="TA_replyToHello">
+</Action>
+
+<!-- REPETITION
+< Action rdf:ID="TA_tradeAssets">
+</Action>
+-->
+<Action rdf:ID="TA_askProducesTypeThreeAsset">
+</Action>
+
+<!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Number Agents Scenario
+    // prefix: NAS_
+    ///////////////////////////////////////////////////////////////////////////////////////
+-->
+
+<!-- Sensors -->
+<Sensor rdf:ID="NAS_numberReader">
+	<datatype rdf:datatype="&xsd;string">java.lang.Character</datatype> 
+</Sensor>
+
+<Sensor rdf:ID="NAS_operatorReader">
+	<datatype rdf:datatype="&xsd;string">pt.iscte.pramc.scenario.na.domain.Operator</datatype> 
+</Sensor>
+
+<!-- Actions -->
+
+<Action rdf:ID="NAS_join">
+</Action>
+
+<Action rdf:ID="NAS_stringToNumber">
+</Action>
+
+<Action rdf:ID="NAS_cleanNumberHolder">
+</Action>
+
+<Action rdf:ID="NAS_cleanResultHolder">
+</Action>
+
+<Action rdf:ID="NAS_sum">
+</Action>
+
+<Action rdf:ID="NAS_subtract">
+</Action>
+
+<Action rdf:ID="NAS_multiply">
+</Action>
+
+<Action rdf:ID="NAS_divide">
+</Action>
+
+<Action rdf:ID="NAS_showResult">
+</Action>
+
+
+</rdf:RDF>
