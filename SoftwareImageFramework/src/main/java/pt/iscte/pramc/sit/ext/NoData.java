@@ -15,7 +15,7 @@ import pt.iscte.pramc.sit.ext.cloning.Copiable;
  * @version 2.0
  * @since Jun 17, 2011
  */
-public class NoData implements Copiable {
+public class NoData implements Copiable<Object> {
 
     @Override
     public String toString() {
@@ -31,7 +31,7 @@ public class NoData implements Copiable {
      * All no data objects are equal
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 	if (obj instanceof NoData) {
 	    return true;
 	}
