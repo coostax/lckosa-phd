@@ -25,7 +25,7 @@ import pt.iscte.pramc.lof.engine.executor.ActionExecutorEngine;
 import pt.iscte.pramc.lof.engine.learning.MirrorLearningEngine;
 import pt.iscte.pramc.lof.engine.memory.SequentialMemoryEngine;
 import pt.iscte.pramc.lof.engine.perception.PerceptionEngine;
-import pt.iscte.pramc.lof.engine.vision.SoftwareVision;
+import pt.iscte.pramc.lof.engine.vision.SoftwareVisionEngine;
 import pt.iscte.pramc.lof.exception.AttributeNotFoundException;
 import pt.iscte.pramc.lof.exception.CannotFindProperSolutionException;
 import pt.iscte.pramc.sit.agent.VisualSoftwareAgent;
@@ -73,7 +73,7 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	private static final double DEFAULT_CONFIDENCE_FACTOR = 5.0;
 	private static final boolean DEFAULT_USE_NEGATIVE_TRAINING = true;
 	/**
-	 * use recall in learning and execution
+	 * use recall in learning and executionEng
 	 */
 	private static final boolean DEFAULT_RECALL_FLAG = true;
 	/**
@@ -95,34 +95,34 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	
 	//-------- ENGINES-------
 	/**
-	 * The software vision sensor
+	 * The software vision engine
 	 */
-	protected final SoftwareVision visionSensor;
+	protected final SoftwareVisionEngine softwareVisionEng;
 
 	/**
-	 * The memory method
+	 * The memoryEng method
 	 */
-	private final SequentialMemoryEngine memory;
+	private final SequentialMemoryEngine memoryEng;
 	
 	/**
 	 * The learning method
 	 */
-	private final MirrorLearningEngine mirror;
+	private final MirrorLearningEngine mirrorEng;
 
 	/**
-	 * The execution method
+	 * The executionEng engine
 	 */
-	private final ActionExecutorEngine execution;
+	private final ActionExecutorEngine executionEng;
 
 	/**
-	 * The evaluation method
+	 * The evaluationEng engine
 	 */
-	private final EvaluationEngine evaluation;
+	private final EvaluationEngine evaluationEng;
 	
 	/**
-	 * The perception method 
+	 * The perception engine 
 	 */
-	protected final PerceptionEngine perception;
+	private final PerceptionEngine perceptionEng;
 	
 	/**
 	 * The best behaviour selected by the apprentice Used for validation
@@ -203,7 +203,7 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 				"learningStage.findCondition.timeout", DEFAULT_CONDITION_LEARNING_TIMEOUT);
 		this.confidenceFactor = PropertiesLoader.loadPropertyFrom(propsFile,
 				"confidence.reduction.factor", DEFAULT_CONFIDENCE_FACTOR);
-		this.visionSensor = new SoftwareVision(this, 
+		this.softwareVisionEng = new SoftwareVisionEngine(this, 
 				PropertiesLoader.loadPropertyFrom(propsFile,
 				"flag.allow.generalization", DEFAULT_GENERALIZATION_FLAG),
 				PropertiesLoader.loadPropertyFrom(propsFile,
@@ -216,18 +216,18 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 		this.stage = Stage.LEARNING;
 		this.conditionsToLookFor = null;
 		//initialize engines
-		this.memory = new SequentialMemoryEngine(this, PropertiesLoader.loadPropertyFrom(propsFile,
+		this.memoryEng = new SequentialMemoryEngine(this, PropertiesLoader.loadPropertyFrom(propsFile,
 				"flag.enableRecall",DEFAULT_RECALL_FLAG), PropertiesLoader.loadPropertyFrom(propsFile,
 				"flag.storeActionInstanceParams",DEFAULT_ACTIONINSTANCE_FLAG),
 				PropertiesLoader.loadPropertyFrom(propsFile,
 						"flag.useSimilarBehaviours",DEFAULT_USE_SIMILAR_BH_FLAG));
-		this.mirror = new MirrorLearningEngine(this,propsFile);
-		this.execution = new ActionExecutorEngine(this);
-		this.evaluation = new EvaluationEngine(this, memory, mirror,PropertiesLoader.loadPropertyFrom(propsFile,
+		this.mirrorEng = new MirrorLearningEngine(this,propsFile);
+		this.executionEng = new ActionExecutorEngine(this);
+		this.evaluationEng = new EvaluationEngine(this, memoryEng, mirrorEng,PropertiesLoader.loadPropertyFrom(propsFile,
 				"confidence.initValue", DEFAULT_CONFIDENCE_INIT),
 				PropertiesLoader.loadPropertyFrom(propsFile,
 						"eval.useNegativeTraining", DEFAULT_USE_NEGATIVE_TRAINING));
-		this.perception = new PerceptionEngine(this);
+		this.perceptionEng = new PerceptionEngine(this);
 	}
 	
 	/**
@@ -260,11 +260,11 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 				this.stage = Stage.EXECUTION;
 		}
 		//call engines
-		this.visionSensor.run();
-		this.perception.run();
-		this.memory.run();
-		this.mirror.run();
-		this.execution.run();
+		this.softwareVisionEng.run();
+		this.perceptionEng.run();
+		this.memoryEng.run();
+		this.mirrorEng.run();
+		this.executionEng.run();
 	}
 
 	public abstract void callAgentRoutine();
@@ -273,12 +273,12 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	
 	/**
 	 * Learning stage method
-	 * Stores the observed step in the agent's memory
+	 * Stores the observed step in the agent's memoryEng
 	 * @param step
 	 */
 	public void store(Step step) {
-		//send to memory method
-		memory.storeObservedStep(step);
+		//send to memoryEng method
+		memoryEng.storeObservedStep(step);
 	}
 
 	/**
@@ -287,9 +287,9 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	 */
 	public void setLastPerformedStep(List<LbOInstance<?>> instances) {
 		if(instances != null){
-			lastPerformedStep = memory.getStepFor(instances);
+			lastPerformedStep = memoryEng.getStepFor(instances);
 			if(lastPerformedStep == null){
-				logger.warn("The performed step " + instances + " was not found in memory");
+				logger.warn("The performed step " + instances + " was not found in memoryEng");
 			}
 		}else{
 			lastPerformedStep = null;
@@ -299,22 +299,22 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	//-------------- Perception Related----------------------------
 	
 	/**
-	 * Selects the first set of actions from the list and sends it to the execution method
+	 * Selects the first set of actions from the list and sends it to the executionEng method
 	 * @param currentConditions
 	 * @param behaviours the list of behaviours as provided by both engines
 	 */
 	public void prepareExecution(List<LbOInstance<?>> currentConditions, List<PossibleBehaviour> behaviours){
 		if(!behaviours.isEmpty()){
-			//get the first of the list of proper behaviours for the current conditions and send to execution
-			execution.prepareExecution(currentConditions,behaviours.get(0));
+			//get the first of the list of proper behaviours for the current conditions and send to executionEng
+			executionEng.prepareExecution(currentConditions,behaviours.get(0));
 		}else{
 			//reduce confidence by a preset factor
-			evaluation.reduceConfidence(confidenceFactor);
+			evaluationEng.reduceConfidence(confidenceFactor);
 		}
 	}
 	
 	/**
-	 * Checks if the conditions currently observed exist in the agent's memory
+	 * Checks if the conditions currently observed exist in the agent's memoryEng
 	 * If not the agent turns into a special learning stage where it tries to find the conditions
 	 * A timeout for this special learning condition is initialized.
 	 * 
@@ -324,7 +324,7 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	 */
 	public boolean checkConditionsInMemory(
 			List<LbOInstance<?>> currentConditions) {
-		if(specialCLTimeout != 0 && !memory.findConditions(currentConditions) && scltCounter <= specialCLTimeout && !currentConditions.equals(previousConditionsLookedFor)){
+		if(specialCLTimeout != 0 && !memoryEng.findConditions(currentConditions) && scltCounter <= specialCLTimeout && !currentConditions.equals(previousConditionsLookedFor)){
 			//put agent in special learning stage
 			this.stage = Stage.LEARNING;
 			this.conditionsToLookFor = currentConditions;
@@ -344,7 +344,7 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	//-------------- Mirror/Recall Related----------------------------
 	
 	/**
-	 * Uses the mirror and/or recall method to provide a list of solutions for the given conditions
+	 * Uses the mirrorEng and/or recall method to provide a list of solutions for the given conditions
 	 * The solution is provided independently of the condition providence. 
 	 * Conditions can come from the agent's perception or from expert observation 
 	 * @param conditions the conditions to provide the solution 
@@ -352,18 +352,18 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	 */
 	public List<PossibleBehaviour> provideBehavioursFor(List<LbOInstance<?>> conditions){
 		List<PossibleBehaviour> behaviours = new ArrayList<PossibleBehaviour>();
-		//train mirror method with information in memory
-		mirror.update();
+		//train mirrorEng method with information in memoryEng
+		mirrorEng.update();
 		try {
-			behaviours.addAll(providedWeightedBehavioursFor(conditions, mirror));
+			behaviours.addAll(providedWeightedBehavioursFor(conditions, mirrorEng));
 		} catch (CannotFindProperSolutionException e) {
-			logger.warn("Could not provide solutions through mirror. "+e.getMessage());
+			logger.warn("Could not provide solutions through mirrorEng. "+e.getMessage());
 		}
-		if(memory.canUseRecall()){
+		if(memoryEng.canUseRecall()){
 			try{
 				//get from recall
-				List<PossibleBehaviour> recallbh = providedWeightedBehavioursFor(conditions, memory.getRecall());
-				//combine with behaviours from memory
+				List<PossibleBehaviour> recallbh = providedWeightedBehavioursFor(conditions, memoryEng.getRecall());
+				//combine with behaviours from memoryEng
 				for(PossibleBehaviour r_pbh : recallbh){
 					boolean exists = false;
 					//see if already exists in behaviours
@@ -399,8 +399,8 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 		//provide behaviours
 		final List<PossibleBehaviour> bhs = estimator.estimateBehaviourFor(conditions);
 		final List<PossibleBehaviour> result = new ArrayList<PossibleBehaviour>(bhs.size());
-		//multiply by estimator weight on evaluation
-		double wgt = evaluation.getWeightFor(estimator);
+		//multiply by estimator weight on evaluationEng
+		double wgt = evaluationEng.getWeightFor(estimator);
 		for(PossibleBehaviour pbh : bhs){
 			result.add(new PossibleBehaviour(pbh.behaviour, pbh.probability * wgt, pbh.provider));
 		}
@@ -410,21 +410,21 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	//------------Evaluation related--------
 	
 	public boolean addPreEvaluator(DSEvaluator evaluator){
-		return this.evaluation.addPreEvaluator(evaluator);
+		return this.evaluationEng.addPreEvaluator(evaluator);
 	}
 	
 	public boolean addPostEvaluator(DSEvaluator evaluator){
-		return this.evaluation.addPostEvaluator(evaluator);
+		return this.evaluationEng.addPostEvaluator(evaluator);
 	}
 	
 	//------------ACCESSORS-----------------
 	
 	/**
-	 * Confidence is stored in the evaluation method 
+	 * Confidence is stored in the evaluationEng method 
 	 * @return the apprentice's confidence
 	 */
 	public double getConfidence() {
-		return evaluation.getConfidence();
+		return evaluationEng.getConfidence();
 	}
 
 	/**
@@ -443,23 +443,23 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	}
 	
 	/**
-	 * Sees if the agent is in the execution stage
-	 * @return true when in the execution stage
+	 * Sees if the agent is in the executionEng stage
+	 * @return true when in the executionEng stage
 	 */
 	public boolean isExecutionStage() {
 		return Stage.EXECUTION.equals(stage);
 	}
 	
 	public boolean isObserving(){
-		return visionSensor.isObservingExpert();
+		return softwareVisionEng.isObservingExpert();
 	}
 	
 	public boolean isObserving(VisualSoftwareAgent expert){
-		return visionSensor.isObservingExpert(expert);
+		return softwareVisionEng.isObservingExpert(expert);
 	}
 	
 	public boolean isBufferEmpty(){
-		return visionSensor.isBufferEmpty();
+		return softwareVisionEng.isBufferEmpty();
 	}
 	
 	/**
@@ -467,17 +467,17 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	 */
 	public void shutdown() {
 		//stop the vision sensor thread
-		visionSensor.stopEngine();
-		memory.stopEngine();
+		softwareVisionEng.stopEngine();
+		memoryEng.stopEngine();
 		//remove from registry TODO: see if necessary
 		AgentRegistry.getAgentRegistry().removeAgent(this);
 	}
 	
 	/**
-	 * @return all the information from the agent's memory
+	 * @return all the information from the agent's memoryEng
 	 */
 	public List<Step> getAllFromMemory(){
-		return this.memory.getAll();
+		return this.memoryEng.getAll();
 	}
 	
 	/**
@@ -485,35 +485,35 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	 */
 	public double[] getEstimatorWeights(){
 		return new double[] {
-				this.evaluation.getRecallMethodWeight(),
-				this.evaluation.getClassificationMethodWeight()
+				this.evaluationEng.getRecallMethodWeight(),
+				this.evaluationEng.getClassificationMethodWeight()
 				};
 	}
 	
 	/**
-	 * @return the evaluation method
+	 * @return the evaluationEng method
 	 */
 	public EvaluationEngine getEvaluationEngine() {
-		return evaluation;
+		return evaluationEng;
 	}
 	
 	/**
-	 * Retrieves a condition attribute from the agent's memory. If the attribute does not exist then it is created
+	 * Retrieves a condition attribute from the agent's memoryEng. If the attribute does not exist then it is created
 	 * @param first the datasource that describes the attribute
 	 * @param allowCreation flag that allows creating a new attribute from the datasource if attribute does not exist
 	 * @return the attribute, null if something went wrong
 	 * @throws AttributeNotFoundException whenever the datasource has no associated attribute
 	 */
 	public ConditionAttribute getAttributeFrom(DataSource ds,boolean allowCreation) throws AttributeNotFoundException {
-		return this.memory.getAttributeFrom(ds,allowCreation);
+		return this.memoryEng.getAttributeFrom(ds,allowCreation);
 	}
 	
 	/**
-	 * Retrieves the behaviour attribute from the agent's memory.  If the attribute does not exist then it is created
+	 * Retrieves the behaviour attribute from the agent's memoryEng.  If the attribute does not exist then it is created
 	 * @return  the attribute, null if something went wrong
 	 */
 	public BehaviourAttribute getBehaviourAttribute(){
-		return this.memory.getBehaviourAttribute();
+		return this.memoryEng.getBehaviourAttribute();
 	}
 	
 	// -----------METRICS--------------------------
@@ -522,14 +522,14 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	 * @return the time to find an expert to observe
 	 */
 	public long getTtfe() {
-		return this.visionSensor.getTtfe();
+		return this.softwareVisionEng.getTtfe();
 	}
 	
 	/**
 	 * @return the time expended comparing the observed expert 
 	 */
 	public long getTtce() {
-		return this.visionSensor.getTtce();
+		return this.softwareVisionEng.getTtce();
 	}
 	
 	/**
@@ -537,7 +537,7 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	 * @return the time to read history
 	 */
 	public long getTtrh() {
-		return this.visionSensor.getTtrh();
+		return this.softwareVisionEng.getTtrh();
 	}
 	
 	/**
@@ -545,24 +545,24 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	 * @return the time to observe a snapshot
 	 */
 	public long getTtso() {
-		return this.visionSensor.getTtso();
+		return this.softwareVisionEng.getTtso();
 	}
 	
 	// ----------FOR JUNIT TESTS ---------------
 
 	protected SequentialMemoryEngine getMemoryEngine() {
-		return memory;
+		return memoryEng;
 	}
 	
 	protected MirrorLearningEngine getLearningEngine() {
-		return mirror;
+		return mirrorEng;
 	}
 	
 	/**
 	 * @return the currently observed step
 	 */
 	public Step getCurrentStep() {
-		return memory.getLastObserved();
+		return memoryEng.getLastObserved();
 	}
 
 	/**
@@ -577,27 +577,27 @@ public abstract class Apprentice implements VisualSoftwareAgent{
 	}
 
 	public String showStorage(){
-		return memory.printStorage();
+		return memoryEng.printStorage();
 	}
 	
 	public boolean isMemorySize(int size){
-		return memory.getMemorySize() == size;
+		return memoryEng.getMemorySize() == size;
 	}
 	
 	public double getAvgObservations(){
-		return memory.getAvgObservations();
+		return memoryEng.getAvgObservations();
 	}
 	
 	public int getMaxObservations(){
-		return memory.getMaxObservations();
+		return memoryEng.getMaxObservations();
 	}
 	
 	public int getMemorySize() {
-		return memory.getMemorySize();
+		return memoryEng.getMemorySize();
 	}
 	
 	public List<LbOAttribute<?>> getAttributes() {
-		return memory.getAttributes();
+		return memoryEng.getAttributes();
 	}
 	
 }

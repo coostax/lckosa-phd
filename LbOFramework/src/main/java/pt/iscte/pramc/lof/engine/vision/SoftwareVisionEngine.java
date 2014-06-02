@@ -55,9 +55,9 @@ import pt.iscte.pramc.tools.TimeMeasurement;
  * @version 1.5 solved syncronization problems with a Step buffer and by timestamping snapshots
  * @since Aug 2, 2011
  */
-public class SoftwareVision extends LTEngine implements Observer{
+public class SoftwareVisionEngine extends LTEngine implements Observer{
 
-	private static Logger logger = Logger.getLogger(SoftwareVision.class);
+	private static Logger logger = Logger.getLogger(SoftwareVisionEngine.class);
 	
 	//---timers
 	/**
@@ -118,7 +118,7 @@ public class SoftwareVision extends LTEngine implements Observer{
 	 * 
 	 * @param associatedSoftwareImage
 	 */
-	public SoftwareVision(Apprentice agent, boolean allowGeneralization, String baseOntPath, String domainOntPath, String baseOntNameSpace) {
+	public SoftwareVisionEngine(Apprentice agent, boolean allowGeneralization, String baseOntPath, String domainOntPath, String baseOntNameSpace) {
 		super(agent);
 		this.hasReadHistory = false;
 		this.allowGeneralization = allowGeneralization;
