@@ -751,5 +751,38 @@
 <Action rdf:ID="NAS_showResult">
 </Action>
 
+ <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Driver Agent Scenario
+    // prefix: DAS_
+    ///////////////////////////////////////////////////////////////////////////////////////
+ -->
+
+<!-- Sensors -->
+
+<Sensor rdf:ID="DAS_distCenterLane">
+	<datatype rdf:datatype="&xsd;in">java.lang.Integer</datatype> 
+</Sensor>
+
+<Sensor rdf:ID="DAS_distLeftLane">
+	<datatype rdf:datatype="&xsd;in">java.lang.Integer</datatype> 
+</Sensor>
+
+<Sensor rdf:ID="DAS_distRightLane">
+	<datatype rdf:datatype="&xsd;in">java.lang.Integer</datatype> 
+</Sensor>
+
+<!-- Actions -->
+
+<Action rdf:ID="DAS_remain">
+</Action>
+
+<Action rdf:ID="DAS_shiftRight">
+</Action>
+
+<Action rdf:ID="DAS_shiftLeft">
+</Action>
+
 
 </rdf:RDF>
